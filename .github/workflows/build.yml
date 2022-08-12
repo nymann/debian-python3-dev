@@ -1,0 +1,29 @@
+name: Build and Push docker images with different versions of Debian
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - "bookworm"
+          - "bullseye"
+          - "buster"
+          - "stable"
+          - "testing"
+          - "unstable"
+    steps:
+      - uses: actions/checkout@v3
+      - name: login
+        run: docker login -u nymann -p ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and push docker image
+        run: |
+          docker build -t ${DOCKER_REPO}:${{ matrix.version }} --build-arg DEBIAN_VERSION=${{ matrix.version }} .
+          docker push --all-tags ${DOCKER_REPO}
+        env:
+          DOCKER_REPO: nymann/debian-python3-dev
+
