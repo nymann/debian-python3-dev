@@ -17,13 +17,23 @@ jobs:
           - "testing"
           - "unstable"
     steps:
-      - uses: actions/checkout@v3
-      - name: login
-        run: docker login -u nymann -p ${{ secrets.DOCKER_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: set up Docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: nymann
+          password: ${{ secrets.DOCKER_TOKEN }}
       - name: Build and push docker image
-        run: |
-          docker build -t ${DOCKER_REPO}:${{ matrix.version }} --build-arg DEBIAN_VERSION=${{ matrix.version }} .
-          docker push --all-tags ${DOCKER_REPO}
-        env:
-          DOCKER_REPO: nymann/debian-python3-dev
-
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: nymann/debian-python3:${{matrix.version}}
+          build-args: |
+            DEBIAN_VERSION=${{ matrix.version}}
