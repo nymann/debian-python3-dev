@@ -2,7 +2,7 @@ name: Build and Push docker images with different versions of Debian
 
 on:
   schedule:
-    - cron: "*/* 23 * * *"
+    - cron: "*/0 23 * * *"
   push:
     branches: [master]
 
