@@ -36,6 +36,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: nymann/debian-python3:${{matrix.version}}
+          tags: nymann/debian-python3-dev:${{matrix.version}}
           build-args: |
             DEBIAN_VERSION=${{ matrix.version}}
